@@ -1,6 +1,7 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +15,24 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String reverse(String string) {
+		//System.out.println(string); // input string is "robot"
+		//String inputValue = string;
+		String outputStr = "";
 		
-		return "";
+		if (string.isEmpty()) { return "";}
+		else {	
+			// first create a character array of the input string "robot"
+			char[] arr = string.toCharArray(); // ['r','o','b','o','t']
+			
+			for (int i = arr.length; i > 0; i--) {
+				char newChar = arr[i-1];
+				//System.out.println(cVal);
+				outputStr += newChar;				
+			}
+			
+		}
+		//System.out.println(outputStr);
+		return outputStr;
 	}
 
 	/**
@@ -27,8 +44,34 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		StringBuilder sb = new StringBuilder();
+		
+		String[] arrStr = phrase.split(" "); //split by space char to separate the words
+		
+//		for (String i : arrStr) {
+//			System.out.println(i);
+//		}
+		
+		//use for loop to grab the first character of each word
+		for (int i = 0; i < arrStr.length; i++) {
+			String word = arrStr[i];
+			
+			//check if it is a compound word using hyphen, split by hyphen
+			//then loop through the inner words and grab first character
+			if (word.contains("-")) {
+				String[] innerWords = word.split("-");
+				for (int j = 0; j < innerWords.length; j++) {
+					sb.append(innerWords[j].charAt(0));
+				}
+				
+			}else {
+				sb.append(arrStr[i].charAt(0));
+			}
+		}
+		//System.out.println(output.toUpperCase());
+		
+		// make sure to return the results in upper case!
+		return sb.toString().toUpperCase();
 	}
 
 	/**
@@ -81,17 +124,28 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
+			if ((sideOne == sideTwo) && (sideTwo == sideThree)) {
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
+			if (!isEquilateral() && !isScalene()) {
+				//System.out.println("Is not equilateral or scalene");
+				if ((sideOne == sideTwo) || (sideOne == sideThree) || (sideTwo == sideThree)) {
+					return true;
+				}
+			}
 			return false;
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
+			if ((sideOne != sideTwo) && 
+				(sideTwo != sideThree) &&
+				(sideThree != sideOne)) {
+				return true;
+			}
 			return false;
 		}
 
@@ -112,9 +166,55 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
+	
+	boolean isInit;
+	
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		int totalPoints = 0;
+		
+		// populate char arrays of the letter groups
+		char[] arrOne = {'A','E','I','O','U','L','N','R','S','T'};
+		char[] arrTwo = {'D','G'};
+		char[] arrThree = {'B','C','M','P'};
+		char[] arrFour = {'F','H','V','W','Y'};
+		char[] arrFive = {'K'};
+		char[] arrEight = {'J','X'};
+		char[] arrTen = {'Q','Z'};		
+		
+		// create a HashMap for lookup
+		Map<Character, Byte> charMap = new HashMap<Character, Byte>();
+		
+		// populate charMap and assign corresponding values for each letter groups
+		for (int i = 0; i < arrOne.length; i++) {
+			charMap.put(arrOne[i], (byte) 1);
+		}
+		for (int i = 0; i < arrTwo.length; i++) {
+			charMap.put(arrTwo[i], (byte) 2);
+		}
+		for (int i = 0; i < arrThree.length; i++) {
+			charMap.put(arrThree[i], (byte) 3);
+		}
+		for (int i = 0; i < arrFour.length; i++) {
+			charMap.put(arrFour[i], (byte) 4);
+		}
+		for (int i = 0; i < arrFive.length; i++) {
+			charMap.put(arrFive[i], (byte) 5);
+		}
+		for (int i = 0; i < arrEight.length; i++) {
+			charMap.put(arrEight[i], (byte) 8);
+		}
+		for (int i = 0; i < arrTen.length; i++) {
+			charMap.put(arrTen[i], (byte) 10);
+		}
+		System.out.println(string);
+		for (int i = 0; i < string.length(); i++) {
+			if (charMap.get(string.toUpperCase().charAt(i)) != null) {
+				byte point = charMap.get(string.toUpperCase().charAt(i));
+				totalPoints += point;				
+			}			
+		}
+		System.out.println(totalPoints);
+		return totalPoints;
 	}
 
 	/**
