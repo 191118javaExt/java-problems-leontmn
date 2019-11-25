@@ -2,8 +2,12 @@ package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class EvaluationService {
 
@@ -15,6 +19,20 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String reverse(String string) {
+		/*Logic:
+			- Input: "robot" as parameter
+			- Analysis: inputs a word, need to output the word in reverse order
+			- Action:
+				1) convert input string to array of characters ['r','o','b','o','t']
+				2) use a for loop backwards
+					for (int i = 5; i > 0; i--)
+				3) String newString = 't' 'o' 'b' 'o' 'r'
+					newString "tobor"
+				4) return newString
+	
+			- Output: "tobor"
+		*/
+		
 		//System.out.println(string); // input string is "robot"
 		//String inputValue = string;
 		String outputStr = "";
@@ -44,13 +62,22 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
+		/*Logic:
+			- Input: phrase = "Portable Network Graphics";
+			- Analysis: inputs a phrase, need to grab the first character of each word 
+							  and output it
+			- Action:
+				1) use String.split to put the words into an array of Strings
+				2) loop through the array and grab the first character of each word
+				   using String.CharAt()
+				3) assign the characters into into StringBuilder and return the value
+		
+			- Output: expected = "PNG"
+		*/
+		
 		StringBuilder sb = new StringBuilder();
 		
 		String[] arrStr = phrase.split(" "); //split by space char to separate the words
-		
-//		for (String i : arrStr) {
-//			System.out.println(i);
-//		}
 		
 		//use for loop to grab the first character of each word
 		for (int i = 0; i < arrStr.length; i++) {
@@ -84,6 +111,22 @@ public class EvaluationService {
 	 *
 	 */
 	static class Triangle {
+		/*Logic:
+			- Input: three doubles 5, 4, 6
+			- Analysis: 
+				- we want to check 3 sides if they are all equal.
+				- we want to check 3 sides if they are all not equal
+				- now check if only 2 sides are equal
+			- Action:
+				1) check if isEquilateral: side1 == side2 == side3
+				2) check if isScalene: side1 != side2 != side3
+				3) check if isIsosceles: 
+					((sideOne == sideTwo) || 
+					(sideOne == sideThree) || 
+					(sideTwo == sideThree))
+			- Output: To check if the sides are isEquilateral, isScalene, isIsosceles
+		*/
+		
 		private double sideOne;
 		private double sideTwo;
 		private double sideThree;
@@ -170,8 +213,22 @@ public class EvaluationService {
 	boolean isInit;
 	
 	public int getScrabbleScore(String string) {
-		int totalPoints = 0;
+		/*Logic: Not so efficient, but can simplify or refactor further
+			- Input: a word
+			- Analysis:
+						- need to determine the points for each letter and add it up
+			- Action:
+						- declare groups of character array
+						- declare a HashMap
+						- create a for loop for the groups of character array and populate the HashMap
+						- loop through each letter of the word and look up the letter in the HashMap
+						- Then get the point of how much that letter is worth
+						- Add up the points and return the total
+			- Output: total points for the input word
 		
+		*/
+		
+		int totalPoints = 0;
 		// populate char arrays of the letter groups
 		char[] arrOne = {'A','E','I','O','U','L','N','R','S','T'};
 		char[] arrTwo = {'D','G'};
@@ -206,14 +263,15 @@ public class EvaluationService {
 		for (int i = 0; i < arrTen.length; i++) {
 			charMap.put(arrTen[i], (byte) 10);
 		}
-		System.out.println(string);
+		
+		//System.out.println(string);
 		for (int i = 0; i < string.length(); i++) {
 			if (charMap.get(string.toUpperCase().charAt(i)) != null) {
 				byte point = charMap.get(string.toUpperCase().charAt(i));
 				totalPoints += point;				
 			}			
 		}
-		System.out.println(totalPoints);
+		//System.out.println(totalPoints);
 		return totalPoints;
 	}
 
@@ -249,8 +307,37 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		/*Logic:
+			- Input: various phone number format
+			- Analysis: need to clean up the phone number to get digits only 
+						and check if there are only 10 numbers
+			- Action: 
+						- create a StringBuilder local variable to return final values
+						- loop through each character of the input string
+						- use isDigit in Character class to check if the char is a number
+						- if is a number append the character into StringBuilder local variable
+			- Output: return 10 digit numerical phone numbers
+		*/
+		
+		StringBuilder cleanedNumber = new StringBuilder();
+		
+		// parsing the input value string into a Char array
+		// then loop through it and check if the character is a number
+		// if is a number append the chars back into a string
+		for (char c : string.toCharArray()) {
+			if(Character.isDigit(c)) {
+				cleanedNumber.append(c);
+			}
+		}
+		
+		// check if the cleaned number is not exactly 10 digits, throw exception error
+		// otherwise return cleanedNumber
+		if (cleanedNumber.length() != 10) {
+			throw new IllegalArgumentException();
+		}
+		
+		//System.out.println(cleanedNumbers);
+		return cleanedNumber.toString();
 	}
 
 	/**
@@ -263,8 +350,42 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		/*Logic:
+			- Input: a string phrase
+			- Analysis:
+						- get unique list of word from the phrase
+						- count occurrences of each word
+						- put the word and number of occurrences into a HashMap
+						- return the HashMap
+			- Action:
+						- Split the string into a String array
+						- add unique words into a HashSet with value of 1 if not exist
+						- if exists get the value of the word and increment it, then update the key value
+						- loop through the String array and count the words
+			- Output: return a HashMap with key (word), and value (number of occurrences)
+		*/
+		//System.out.println("========" + string.replace("\n", "") + "========");
+				
+		Map<String, Integer> output = new HashMap<String, Integer>();
+		
+		String[] words = string.replace("\n", "").split(" |,");
+		for (String word : words) {
+			if (output.containsKey(word)) {
+				int value = output.get(word);
+				output.replace(word, ++value);
+			}else {
+				output.put(word, 1);
+			}
+		}
+		
+		/*
+		Iterator iter = output.entrySet().iterator();
+		while(iter.hasNext()) {
+			System.out.println(iter.next());
+		}
+		*/
+		
+		return output;
 	}
 
 	/**
