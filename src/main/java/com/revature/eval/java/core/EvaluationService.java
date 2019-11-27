@@ -795,18 +795,25 @@ public class EvaluationService {
 			// get the index of the character in the plain letter arrays
 			// get the cipher letter using the index
 			// append character to SB
+
 			for(Character c: input.toLowerCase().toCharArray()) {
 				int index = plainArr.indexOf(c);
-				char tempC = cipArr[index];
-				if (counter >= 5) {					
-					outSB.append(" " + tempC);
-					counter = 1;
-				}else {					
-					outSB.append(tempC);
+				if (index !=-1) {
+					char tempC = cipArr[index];
+					
+					if (counter >= 5) {					
+						outSB.append(" " + tempC);
+						counter = 1;
+					}else {					
+						outSB.append(tempC);
+						counter++;
+					}
+				}else {
+					outSB.append(c);
 					counter++;
 				}
 			}
-			System.out.println(outSB.toString());
+			//System.out.println(outSB.toString());
 			return outSB.toString();
 		}
 
@@ -896,9 +903,7 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-//		System.out.println(given.toString());
-//		LocalDateTime dt = LocalDateTime.parse(given.toString());		
-//		System.out.println(dt.getHour());
+		// Can exclude
 		return null;
 	}
 
