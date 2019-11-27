@@ -1,13 +1,13 @@
 package com.revature.eval.java.core;
 
+import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalField;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class EvaluationService {
 
@@ -464,8 +464,89 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		// create a list of vowels
+		List<String> vowelsArr = Arrays("aeiou".toCharArray());
+		// is the output to return string variable
+		String output = ""; 
+		
+		// Separates the input string into words by space char if we get phrases
+		String[] words = string.split(" ");	
+		String prevChar = "";
+		
+		// if only one word
+		if (words.length == 1) {
+			//System.out.println(words[0]);
+			StringBuilder sb = new StringBuilder(words[0]);
+			
+			// puts the word characters into a String array
+			List<String> charArr = Arrays(words[0].toCharArray());
+			
+			// loops through the array			
+			for (String i:charArr) {	
+				// if char is a vowel break the loop and add "ay" to the end of sb
+				if (vowelsArr.contains(i)) {
+					// special conditional check, sometimes in pigLatin u goes with q
+					if (i.equals("u") && prevChar.equals("q")) {
+						sb.insert(sb.length(), "qu");
+					}else {
+						output = (sb.toString() + "ay");
+					}
+					break;
+				}
+				else { // if char is not a vowel, append char to the end of the current sb, delete at index 0
+					//System.out.println(i);
+					sb.insert(sb.length(), i);
+					sb.deleteCharAt(0);
+				}
+				prevChar = i;
+			}
+		}else { // if more than one word
+			int wordCount = 0;
+			for (String word: words) {	
+				wordCount++;
+				StringBuilder sb = new StringBuilder(word);
+				List<String> charArr = Arrays(word.toCharArray());
+				//System.out.println(word);
+				for (String i:charArr) {
+					// special conditional check, sometimes in pigLatin u goes with q
+					if (i.equals("u") && prevChar.equals("q")) {
+						// deletes first index and last index "q"
+						sb.deleteCharAt(0);						
+						sb.deleteCharAt(sb.length()-1);
+						sb.append("qu");
+						//System.out.println(sb);
+					}else if (vowelsArr.contains(i)) {
+						// trim the last space for the last word in loop
+						if (wordCount == words.length) {
+							sb.append("ay");
+						}else {
+							sb.append("ay ");
+						}
+						
+						output += (sb.toString());
+						break;
+					}
+					else {
+						//System.out.println(i);
+						sb.append(i);
+						sb.deleteCharAt(0);
+					}
+					prevChar = i;
+				}
+			}
+		}
+		
+		//System.out.println(output);
+		
+		return output;
+	}
+
+	private List<String> Arrays (char[] charArray) {
+		List<String> outputArr = new ArrayList<>();
+		for(Character c:charArray) {
+			outputArr.add(c.toString());
+		}
+		return outputArr;
 	}
 
 	/**
@@ -484,7 +565,26 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
+		//System.out.println(input);
+		// add input string into char array
+		char[] charArr = Integer.toString(input).toCharArray();
+		
+		// set power or exponent to the length of the num of digits
+		int power = String.valueOf(input).length();
+		int sum = 0;
+		
+		// loop through the char array
+		for(Character c:charArr) {
+			// parse the c into an integer
+			int x = Integer.parseInt(c.toString());
+			// use Math power method and sum up the result
+			sum += Math.pow(x, power);
+		}
+		//System.out.println(sum);
+		if (sum == input) {
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -499,8 +599,35 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		List<Long> factors = new ArrayList<>();
+		long resultA = l; //set local variable to input value
+		
+		// run a while loop to keep dividing the result by 2 or by 3
+		// depends if divide by 2 or 3, add to factors list
+		while(resultA>1) {
+			//check if result is a whole number, if not, that's the lowest prime factor
+			boolean isWholeNum = (double)resultA % 2L == 0 ? true : false;
+			// if whole number, divide by two
+			if (isWholeNum) {
+				resultA = resultA / 2L;
+				//System.out.println(resultA);
+				factors.add(2L);
+			}else { // if not whole number, try divide by 3. If equals 1, that's the lowest
+				resultA = resultA / 3L;
+				//System.out.println(resultA);
+				factors.add(3L);
+			}
+			
+		}
+		
+		// check if result is not 1, add the last prime factor
+		if (resultA != 1) {
+			factors.add(resultA);
+		}
+//		for(Long i: factors) {
+//			System.out.println(i);
+//		}
+		return factors;
 	}
 
 	/**
@@ -531,17 +658,54 @@ public class EvaluationService {
 	 */
 	static class RotationalCipher {
 		private int key;
-
+		String letters = "abcdefghijklmnopqrstuvwxyz";
+		boolean isLowerCase = false;
+		
 		public RotationalCipher(int key) {
 			super();
 			this.key = key;
 		}
 
 		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			StringBuilder sbWords = new StringBuilder();			
+			sbWords.append(GetCipher(string));
+			//System.out.println(sbWords.toString());
+			return sbWords.toString();			
 		}
-
+		
+		// added a private method to keep code clean and re-usable
+		// input the word, loops through each character
+		// get index of the character in the letters array
+		// use a for loop for the length of "key" and increment the index
+		// if index equals 26, reset index to 0 and continue incrementing until loop exists
+		// then grab the character from the letters array by the final index
+		
+		private String GetCipher(String word) {
+			StringBuilder sbChars = new StringBuilder();
+			for(Character c : word.toCharArray()) {
+				String cLower = c.toString().toLowerCase();
+				
+				isLowerCase = c.toString().equals(cLower) ? true : false;
+				int index = letters.indexOf(cLower);
+				if (index !=-1) {
+					for (int i = 0; i < key; i++) {
+						index++;
+						if (index == 26) {
+							index = 0;
+						}				
+					}
+					//System.out.println(letters.charAt(index));
+					if (isLowerCase) {
+						sbChars.append(letters.charAt(index));
+					}else {
+						sbChars.append(letters.toUpperCase().charAt(index));
+					}
+				}else {
+					sbChars.append(c);
+				}
+			}
+			return sbChars.toString();
+		}
 	}
 
 	/**
@@ -557,8 +721,35 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		// check if input is less than or equals zero, throw exception
+		if (i <= 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		int numToLoop = i;
+		int output = 0;
+
+        int countPrime = 0;
+        int x;
+        
+        // loops nth time
+        // if output is not a prime number, keep looping until it
+        // reaches the nth prime number
+        while (countPrime < numToLoop){
+        	output+=1;
+        	for (x = 2; x <= output; x++){
+        		if (output % x == 0) {
+        			break;
+        		}
+        	}
+        	// checks of x equals output, then increment
+        	if (x == output){
+        		countPrime = countPrime+1;
+        	}
+        }
+        //System.out.println(String.format("%s prime is: %s", numToLoop, output));
+
+		return output;
 	}
 
 	/**
@@ -664,7 +855,9 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
+//		System.out.println(given.toString());
+//		LocalDateTime dt = LocalDateTime.parse(given.toString());		
+//		System.out.println(dt.getHour());
 		return null;
 	}
 
