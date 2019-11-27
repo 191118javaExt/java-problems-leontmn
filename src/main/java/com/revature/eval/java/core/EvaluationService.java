@@ -1,10 +1,7 @@
 package com.revature.eval.java.core;
 
-import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,9 +206,6 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
-	
-	boolean isInit;
-	
 	public int getScrabbleScore(String string) {
 		/*Logic: Not so efficient, but can simplify or refactor further
 			- Input: a word
@@ -427,7 +421,6 @@ public class EvaluationService {
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
-			// TODO Write an implementation for this method declaration
 			return 0;
 		}
 
@@ -784,9 +777,37 @@ public class EvaluationService {
 		 * @param string
 		 * @return
 		 */
+		
 		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			String plainArr = "abcdefghijklmnopqrstuvwxyz";
+			char[] cipArr = "zyxwvutsrqponmlkjihgfedcba".toCharArray();
+			//clean up input string, removing all punctuation and spaces
+			String input = string
+					.replaceAll("[^a-zA-Z0-9\\s]", "")
+					.replace(" ", "")
+					.toLowerCase();
+			
+			//System.out.println(input);
+			StringBuilder outSB = new StringBuilder();
+			int counter = 0;
+			
+			// loop through each character of the input string
+			// get the index of the character in the plain letter arrays
+			// get the cipher letter using the index
+			// append character to SB
+			for(Character c: input.toLowerCase().toCharArray()) {
+				int index = plainArr.indexOf(c);
+				char tempC = cipArr[index];
+				if (counter >= 5) {					
+					outSB.append(" " + tempC);
+					counter = 1;
+				}else {					
+					outSB.append(tempC);
+					counter++;
+				}
+			}
+			System.out.println(outSB.toString());
+			return outSB.toString();
 		}
 
 		/**
@@ -796,8 +817,28 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String decode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			char[] plainArr = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+			String cipArr = "zyxwvutsrqponmlkjihgfedcba";
+			
+			String input = string.replace(" ", "");
+			//System.out.println(input);
+			StringBuilder outSB = new StringBuilder();
+			
+			// loop through each character of the input string
+			// get the index of the character in the cipher letter arrays
+			// get the plain letter using the index
+			// append character to SB
+			for(Character c: input.toLowerCase().toCharArray()) {				
+				int index = cipArr.indexOf(c);
+				if (index != -1) {
+					char tempC = plainArr[index];
+					outSB.append(tempC);
+				}else {
+					outSB.append(c);
+				}
+			}
+			//System.out.println(outSB.toString());
+			return outSB.toString();
 		}
 	}
 
@@ -948,7 +989,7 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
+
 		return 0;
 	}
 
