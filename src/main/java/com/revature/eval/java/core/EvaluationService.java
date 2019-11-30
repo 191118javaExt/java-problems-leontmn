@@ -3,8 +3,10 @@ package com.revature.eval.java.core;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class EvaluationService {
 
@@ -592,31 +594,27 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
+		long numL = l;
 		List<Long> factors = new ArrayList<>();
-		long resultA = l; //set local variable to input value
+		//System.out.println("Input: " + l);
 		
-		// run a while loop to keep dividing the result by 2 or by 3
-		// depends if divide by 2 or 3, add to factors list
-		while(resultA>1) {
-			//check if result is a whole number, if not, that's the lowest prime factor
-			boolean isWholeNum = (double)resultA % 2L == 0 ? true : false;
-			// if whole number, divide by two
-			if (isWholeNum) {
-				resultA = resultA / 2L;
-				//System.out.println(resultA);
-				factors.add(2L);
-			}else { // if not whole number, try divide by 3. If equals 1, that's the lowest
-				resultA = resultA / 3L;
-				//System.out.println(resultA);
-				factors.add(3L);
+		// start a for loop with the lowest prime number of 2
+		// loop until 
+		for(long factor = 2; factor<=numL; factor++) {
+			while(numL % factor == 0) {
+				// found a factor that is divisible without remainder
+				// add to the factors list
+				factors.add(factor);
+				
+				// here we want to check only on the second factor and keep simplying down
+				// 901255 / 5 = 180251
+				// 180251 / 17 = 10603
+				// 10603 / 23 = 461
+				// 461 cannot be further simply, so that's the lowest prime factor
+				numL /= factor;
 			}
-			
 		}
 		
-		// check if result is not 1, add the last prime factor
-		if (resultA != 1) {
-			factors.add(resultA);
-		}
 //		for(Long i: factors) {
 //			System.out.println(i);
 //		}
@@ -872,8 +870,39 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		String input = string;
+		
+		// get numbers only and last char and store in char arrays
+		char[] numChars = input.replaceAll("[^0-9\\s]", "").toCharArray();
+		char lastChar = input.toLowerCase().charAt(string.length()-1);
+		int sum = 0;
+		
+		// if not 10 digits or 9 digits and lastchar is not X, return false
+		if (numChars.length !=10 && (numChars.length == 9 && lastChar != 'x')){
+			return false;
+		}
+		
+		// loop through the numbers and multiply each number by counter from 10 to 1
+		// add the result to sum
+		for (int i = 0; i < numChars.length; i++) {
+			int num = Character.getNumericValue(numChars[i]);
+			sum += num * (10 - i);
+			//System.out.println(String.format("%s * %s = %s", num, 10 - i, num * (10 - i)));
+		}
+		
+		// check if the last char is X, then add 10
+		if (lastChar == 'x') {
+			sum += 10;
+		}
+		//System.out.println(sum);
+		//System.out.println(sum % 11);
+
+		// divide the sum by 11 modulus and return true if no remainders
+		if (sum % 11 == 0){
+			return true;
+		}else {
+			return false;
+		}
 	}
 
 	/**
@@ -890,8 +919,36 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		// create two set collection to hold the 26 letters and the unique input
+		// string characters. Later we want to compare the two sets
+		char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		Set<Character> setLetters = new HashSet<>();
+		Set<Character> inputSet = new HashSet<>();
+		
+		// get only alpha characters
+		String input = string.replaceAll("[^a-zA-Z]+", "");
+		//System.out.println(input);
+		
+		// base check if string is empty, return false
+		if (string.isEmpty()) {
+			return false;
+		}
+				
+		// add the string letters into the letters set
+		for(Character c: letters) {
+			setLetters.add(c);
+		}
+		
+		// add the characters of the input string into the input set
+		for(Character c: input.toLowerCase().toCharArray()) {
+			inputSet.add(c);
+		}
+		
+		//System.out.println(setChar);
+		//System.out.println(inputSet);
+		//System.out.println(setChar.equals(inputSet));
+		
+		return setLetters.equals(inputSet);
 	}
 
 	/**
@@ -921,8 +978,31 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		int maxValue = i;
+		int[] setNums = set;
+		
+		// create a set of integer to store the unique multiples
+		Set<Integer> multiples = new HashSet<>();
+		int total = 0;
+		
+		// loop through the set of input integers
+		// multiply each factor by 1,2,3,4...not over the maxValue
+		for (int j = 0; j < setNums.length; j++) {
+			int currNum = setNums[j];
+			for (int j2 = 1; currNum * j2 < maxValue; j2++) {
+				int sum = currNum * j2;
+				multiples.add(sum);
+				//System.out.println(String.format("%s * %s = %s", currNum, j2, sum));
+			}
+		}
+		
+		// add up the multiples
+		for(Integer num: multiples) {
+			total += num;
+		}
+		
+		//System.out.println(total);
+		return total;
 	}
 
 	/**
@@ -962,8 +1042,49 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		// check if string contains non-digit characters, return false
+		String checkPunct = string.replaceAll("[0-9\\s]", "");		
+		if (checkPunct.length() != 0) {
+			//System.out.println(string);
+			return false;
+		}
+		
+		String clean = string.replaceAll("[^0-9]+", "");
+		//List<Integer> nums = new ArrayList<>();
+		int total = 0;
+		
+		// loops through the input string and grab every other number starting
+		// at the 2nd number from the right store into Num2
+		// grab every other number starting at the 1st number from the right
+		// and store into Num1
+		
+		for (int i = clean.length() - 1; i > 0 ; i-=2) {
+			int num1 = Character.getNumericValue(clean.charAt(i));
+			int num2 = Character.getNumericValue(clean.charAt(i - 1));
+			
+			// double the num2 value
+			num2 *= 2;
+			
+			// if after doubling the num2 value and is greater than 9, subtract 9
+			if (num2 > 9) {
+				num2 -= 9;
+			}
+			
+			// add up the two numbers
+			total += (num1 + num2);
+			//System.out.println(num + "," + num2);
+			//nums.add(num);
+			//nums.add(num2);
+		}
+		//Collections.reverse(nums);
+		//System.out.println(nums);
+		if (total % 10 == 0) {
+			return true;
+		}else {
+			return false;
+		}
+		
 	}
 
 	/**
@@ -994,8 +1115,58 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int solveWordProblem(String string) {
-
-		return 0;
+		
+		// create constant string values for the 4 math operators
+		final String PLUS = "PLUS";
+		final String MINUS = "MINUS";
+		final String MULTIPLIED = "MULTIPLIED";
+		final String DIVIDED = "DIVIDED";
+		
+		String operater = "";
+		String input = string.toUpperCase();
+		String[] parts = new String[0];
+		
+		int total = 0;
+		
+		// check for the string word for each operators
+		if (input.toUpperCase().contains(PLUS)) {
+			parts = input.split(PLUS);
+			operater = PLUS;
+		}else if (input.contains(MINUS)) {
+			parts = input.split(MINUS);
+			operater = MINUS;
+		}else if (input.contains(MULTIPLIED)) {
+			parts = input.split(MULTIPLIED);
+			operater = MULTIPLIED;
+		}else if (input.contains(DIVIDED)) {
+			parts = input.split(DIVIDED);
+			operater = DIVIDED;
+		}
+		
+		// get just the integer values from the string
+		int num1 = Integer.parseInt(parts[0].replaceAll("[^0-9\\-]", ""));
+		int num2 = Integer.parseInt(parts[1].replaceAll("[^0-9\\-]", ""));
+		//System.out.println(String.format("%s %s %s", num1, operater, num2));
+		
+		// use a switch statement on the operator variable to determine
+		// which operator to use for the two numbers and do the calculation
+		switch(operater) {
+			case PLUS:
+				total = num1 + num2;
+				break;
+			case MINUS:
+				total = num1 - num2;
+				break;
+			case MULTIPLIED:
+				total = num1 * num2;
+				break;
+			case DIVIDED:
+				total = num1 / num2;
+				break;				
+		}
+		
+		//System.out.println(total);
+		return total;
 	}
 
 }
